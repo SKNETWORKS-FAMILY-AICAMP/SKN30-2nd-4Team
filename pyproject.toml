@@ -1,0 +1,23 @@
+[project]
+name = "skn30-2nd-4team"
+version = "0.1.0"
+description = "과거 상영작 데이터를 통한 개봉예정작 흥행 예측 모델"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "mysql-connector-python>=9.6.0",
+    "python-dotenv>=1.2.2",
+    "pydantic>=2.0.0",
+    "requests>=2.33.1",
+    "ipykernel>=7.2.0",
+    "pandas>=3.0.3",
+    "matplotlib>=3.10.9",
+    "seaborn>=0.13.2",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["data", "util"]

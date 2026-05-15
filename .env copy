@@ -1,0 +1,7 @@
+DB_HOST='localhost'
+DB_USER='root'
+DB_PASSWORD='비번'
+DB_NAME='film'
+
+KOBIS_URL='http://www.kobis.or.kr/kobisopenapi/webservice/rest'
+KOBIS_KEY='본인 api key'
