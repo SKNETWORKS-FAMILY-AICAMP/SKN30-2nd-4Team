@@ -136,7 +136,12 @@ mysqldump -u [사용자] -p[비밀번호] [DB이름] [테이블1] [테이블2] >
 mysqldump -u root -p password123 film movies daily_box_office > historical_data.sql
 ```
 
-추출 후 insert문만 남겨주세요.
+> [!CAUTION]
+> ### 🚨 매우 중요: 추출 후 INSERT 문만 남겨주세요!
+> `mysqldump`로 추출된 파일에는 테이블을 삭제(`DROP`)하거나 다시 생성(`CREATE`)하는 명령어가 포함되어 있을 수 있습니다. 
+> 이 파일들을 `migrate/` 폴더에 넣고 마이그레이션을 실행할 때, **기존에 잘 구축해둔 테이블이나 데이터를 통째로 날려버리는 대참사**가 발생할 수 있습니다. 
+> 
+> 반드시 파일을 열어 **`INSERT INTO ...` 문을 제외한 나머지 상단과 하단의 모든 쿼리들은 삭제**한 뒤 저장해 주세요.
 
 ---
 
