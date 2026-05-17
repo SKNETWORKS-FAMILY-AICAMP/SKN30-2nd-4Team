@@ -55,7 +55,7 @@ for sql_file in $FILES; do
         cat "$sql_file" | docker exec -i $CONTAINER_NAME mysql -u$DB_USER -p$DB_PASSWORD $DB_NAME
     else
         # 로컬 환경: 로컬 시스템의 mysql 명령어 사용
-        MYSQL_PWD=$DB_PASSWORD mysql -h $DB_HOST -P ${DB_PORT:-3306} -u $DB_USER $DB_NAME < "$sql_file"
+        MYSQL_PWD=$DB_PASSWORD mysql -h $DB_HOST -P ${DB_PORT:-3306} --default-character-set=utf8mb4 -u $DB_USER $DB_NAME < "$sql_file"
     fi
     
     if [ $? -eq 0 ]; then

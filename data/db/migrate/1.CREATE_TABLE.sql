@@ -12,7 +12,7 @@ CREATE TABLE movies (
     movie_id      VARCHAR(20)  NOT NULL, -- KOBIS 영화코드
     title         VARCHAR(255) NOT NULL, -- 영화명
     genre         VARCHAR(50)  NOT NULL, -- 장르
-    rating        VARCHAR(30)  NOT NULL, -- 관람등급
+    rating        VARCHAR(50)  NOT NULL, -- 관람등급
     nation        VARCHAR(50)  NOT NULL, -- 제작국가
     open_date     DATE         NOT NULL, -- 개봉일
     runtime       SMALLINT UNSIGNED NOT NULL, -- 상영시간(분)

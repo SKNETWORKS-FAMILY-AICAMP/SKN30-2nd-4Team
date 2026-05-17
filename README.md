@@ -63,17 +63,6 @@ DB_NAME=film
 > CREATE DATABASE film CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 > ```
 > 
-> 위와 같이 유니코드 옵션을 붙여 데이터베이스를 생성해두었을 경우, 마이그레이션 2번 이후(데이터 적재)실행 시 오류 방지를 위해 기존 migrate.sh 코드 부분 수정이 필요할 수 있습니다.
-> ```python
-> # 로컬 환경: 로컬 시스템의 mysql 명령어 사용
->        MYSQL_PWD=$DB_PASSWORD mysql -h $DB_HOST -P ${DB_PORT:-3306} -u $DB_USER $DB_NAME < "$sql_file"
-> ```
-> 위 코드 부분을 아래와 같이 수정하면 됩니다.
-> ```python
-> # 로컬 환경: 로컬 시스템의 mysql 명령어 사용
->        MYSQL_PWD=$DB_PASSWORD mysql -h $DB_HOST -P ${DB_PORT:-3306} --default-character-set=utf8mb4 -u $DB_USER $DB_NAME < "$sql_file"
->```
-> 
 ## 3. 데이터베이스 마이그레이션
 테이블 구조를 생성하고 초기 데이터를 적재합니다. 윈도우 사용자는 **Git Bash** 환경에서 실행하는 것을 권장합니다. (보통은 vscode에서 그냥 실행하시면 됩니다.)
 
