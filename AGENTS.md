@@ -66,20 +66,19 @@ SKN30-2nd-4Team/
 │       ├── migrate/
 │       │   └── 1.CREATE_TABLE.sql  # 전체 테이블 DDL
 │       │
-│       ├── insert_box_office.ipynb  # ✅ 완료 — 박스오피스 데이터 수집
-│       ├── insert_movie.ipynb       # ✅ 완료 — 영화 상세 + 영화사 수집
-│       └── insert_people.ipynb      # 📋 예정 — 영화인 ID 매핑 및 캐스팅 구축
+│       ├── insert_box_office.ipynb  # 박스오피스 데이터 수집
+│       ├── insert_movie.ipynb       # 영화 상세 + 영화사 수집
+│       └── insert_people.ipynb      # 영화인 ID 매핑 및 캐스팅 구축
 │
 └── ml/                           # ML/DL 모델링 (상세: ml/README.md 참조)
     ├── README.md                 # 모델링 작업 가이드 및 협업 규칙
-    ├── 00_feature_table.ipynb    # ✅ 완료 — 공통 피처 테이블 생성 (공동 작업용)
-    ├── 01_eda_baseline.ipynb     # 📋 예정 — EDA + Baseline ML
-    ├── 02_boosting.ipynb         # 📋 예정 — XGBoost, LightGBM + 튜닝
-    ├── 03_deep_learning.ipynb    # 📋 예정 — MLP 회귀 + 분류
-    ├── 04_model_comparison.ipynb # 📋 예정 — 전체 모델 비교 및 최종 선정
+    ├── 00_feature_table.ipynb    # 공통 피처 테이블 생성 (공동 작업용)
+    ├── 01_eda_baseline.ipynb     # EDA + Baseline ML
+    ├── 02_boosting.ipynb         # XGBoost, LightGBM + 튜닝
+    ├── 03_deep_learning.ipynb    # MLP 회귀 + 분류
+    ├── 04_model_comparison.ipynb # 전체 모델 비교 및 최종 선정
     └── data/
-        ├── feature_table_v1.csv  # ✅ 피처 테이블 v1 (2,397편, 46개 컬럼)
-        ├── feature_table.md      # 피처 설계 명세서
+        ├── baseline_feature_table.md      # 피처 설계 명세서
         └── CHANGELOG.md          # 피처 버전 변경 기록
 ```
 
@@ -114,9 +113,8 @@ SKN30-2nd-4Team/
 
 | 단계 | 내용 | 상태 |
 |------|------|------|
-| 데이터 수집 | 박스오피스, 영화, 영화사 데이터 적재 | ✅ 완료 |
-| 데이터 수집 | 영화인 ID 매핑 및 캐스팅 구축 | 📋 예정 |
-| 피처 엔지니어링 | 공통 피처 테이블 v1 생성 (46개 컬럼) | ✅ 완료 |
+| 데이터 수집 | 박스오피스, 영화, 영화사 데이터, 영화인 ID 매핑 및 캐스팅 적재 | ✅ 완료 |
+| 피처 엔지니어링 | 공통 피처 테이블 v1 생성 (46개 컬럼) | 🔧 진행중 |
 | 피처 엔지니어링 | 피처 버전업 (v2, v3, …) | 🔧 진행중 |
 | EDA + Baseline ML | 탐색적 분석 + Linear, Ridge, Lasso, RF | 📋 예정 |
 | Boosting ML | XGBoost, LightGBM + Optuna 튜닝 | 📋 예정 |
