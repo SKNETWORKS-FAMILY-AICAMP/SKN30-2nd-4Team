@@ -15,7 +15,7 @@ API로 수집한 영화 데이터를 실제 DB에 넣거나 꺼내는 모든 작
 | `insert_box_office.ipynb` | ✅ 박스오피스 데이터 수집 노트북 |
 | `insert_movie.ipynb` | 🔧 영화 상세 + 영화사 수집 노트북 |
 | `insert_people.ipynb` | 📋 영화인 ID 매핑 노트북 |
-
+| `insert_naver_trend.ipynb` | 📈 네이버 트렌드 수집 노트북 |
 ---
 
 ## 🚀 사용법
@@ -56,6 +56,7 @@ movie_casting      : 영화-영화인 출연 관계
 companys           : 영화사 정보 (제작사, 배급사 등)
 company_part       : 영화-영화사 참여 관계
 holidays           : 공휴일 정보
+naver_search_trend : 네이버 검색어 트렌드
 ```
 
 > 📖 테이블 컬럼 상세 내용은 `migrate/1.CREATE_TABLE.sql` 파일을 참고하세요.

@@ -5,3 +5,7 @@ DB_NAME='film'
 
 KOBIS_URL='http://www.kobis.or.kr/kobisopenapi/webservice/rest'
 KOBIS_KEY='본인 api key'
+
+NAVER_API_URL=''
+NAVER_CLIENT_ID=''
+NAVER_CLIENT_SECRET=''

@@ -41,5 +41,10 @@ class AppSettings(BaseModel):
         'connection_timeout': 10
     })
 
+    # 3. NAVER API 설정
+    NAVER_API_URL: str = Field(default=os.getenv('NAVER_API_URL', 'https://openapi.naver.com/v1'))
+    NAVER_CLIENT_ID: str | None = Field(default=os.getenv('NAVER_CLIENT_ID'))
+    NAVER_CLIENT_SECRET: str | None = Field(default=os.getenv('NAVER_CLIENT_SECRET'))
+
 # 전역 설정 객체 생성 (싱글톤)
 settings = AppSettings()

@@ -99,3 +99,15 @@ CREATE TABLE holidays (
     holiday_type VARCHAR(20) DEFAULT 'National', -- 구분 (National: 법정공휴일, Special: 임시공휴일/샌드위치데이 등)
     is_weekend_effect BOOLEAN DEFAULT FALSE    -- 주말과 이어진 황금연휴 여부 (피처 가중치용)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- 9 원시 검색 트렌드 데이터 (API 응답 그대로 저장)
+CREATE TABLE naver_search_trend (
+    movie_id      VARCHAR(20)   NOT NULL,
+    trend_date    DATE          NOT NULL,      -- 일별 검색 지수 날짜
+    search_index  DECIMAL(5, 2) NOT NULL,      -- 네이버 상대 검색 지수 (0.00~100.00)
+    query_period_start DATE    NOT NULL,       -- API 조회 시작일 (재현성 확보)
+    query_period_end   DATE    NOT NULL,       -- API 조회 종료일
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (movie_id, trend_date),
+    FOREIGN KEY (movie_id) REFERENCES movies(movie_id)
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
