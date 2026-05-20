@@ -11,7 +11,10 @@
 |------|------|
 | `kobis_client.py` | KOBIS API를 실제로 호출하는 함수들이 모여 있습니다 |
 | `kobis_dto.py` | API 응답 데이터를 파이썬 객체로 정의합니다 (Pydantic 사용) |
-| `API_SPEC.md` | KOBIS API의 상세 명세서 (요청/응답 필드 설명) |
+| `KOBIS_API_SPEC.md` | KOBIS API의 상세 명세서 (요청/응답 필드 설명) |
+| `naver_client.py` | 네이버 API를 실제로 호출하는 함수들이 모여 있습니다 |
+| `naver_dto.py` | API 응답 데이터를 파이썬 객체로 정의합니다 (Pydantic 사용) |
+| `NAVER_API_SPEC.md` | 네이버 API의 상세 명세서 (요청/응답 필드 설명) |
 | `__init__.py` | 패키지 외부에서 함수를 쉽게 불러올 수 있도록 정리합니다 |
 
 ---
@@ -52,7 +55,7 @@ for person in response.peopleListResult.peopleList:
 | `get_people_list` | 영화인 목록 검색 | `people_nm`, `filmo_names` |
 | `get_people_info` | 영화인 상세 정보 조회 | `people_cd: str` |
 | `get_common_codes` | 공통 코드 조회 (지역코드 등) | `com_code: str` |
-
+| `get_naver_search_trend`| 네이버 검색 트랜드 조회 | 클래스 참고 |
 ---
 
 ## 💡 동작 원리 (입문자용 설명)

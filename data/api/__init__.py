@@ -1,6 +1,6 @@
 """
-영화진흥위원회(KOBIS) API 클라이언트 패키지
-이 패키지는 영화 관련 데이터를 조회하는 다양한 API 함수를 제공합니다.
+영화진흥위원회(KOBIS) 및 네이버 데이터랩 API 클라이언트 패키지
+이 패키지는 영화 및 검색 트렌드 관련 데이터를 조회하는 다양한 API 함수를 제공합니다.
 """
 
 from data.api.kobis_client import (
@@ -14,6 +14,10 @@ from data.api.kobis_client import (
     get_people_info        # 영화인 상세 정보 조회
 )
 
+from data.api.naver_client import (
+    get_naver_search_trend  # 네이버 검색어 트렌드 조회
+)
+
 # 외부에서 'from data.api import *' 등을 사용할 때 공개될 함수 목록
 # ex: from data.api import get_movie_list, get_movie_info
 __all__ = [
@@ -24,5 +28,6 @@ __all__ = [
     "get_company_list",      # 영화사 목록 검색
     "get_company_info",      # 영화사 상세 정보 조회
     "get_people_list",       # 영화인 목록 검색
-    "get_people_info"        # 영화인 상세 정보 조회
+    "get_people_info",       # 영화인 상세 정보 조회
+    "get_naver_search_trend" # 네이버 검색어 트렌드 조회
 ]

@@ -55,10 +55,13 @@ SKN30-2nd-4Team/
 │
 ├── data/
 │   ├── api/
-│   │   ├── __init__.py           # API 함수 export (get_daily_box_office 등 8개)
+│   │   ├── __init__.py           # API 함수 export (KOBIS 8개 + NAVER 1개)
 │   │   ├── kobis_client.py       # KOBIS REST API 호출 함수 구현체
 │   │   ├── kobis_dto.py          # Pydantic DTO (자동 형변환 적용)
-│   │   └── API_SPEC.md           # KOBIS API 명세서
+│   │   ├── KOBIS_API_SPEC.md     # KOBIS API 명세서
+│   │   ├── naver_client.py       # NAVER REST API 호출 함수 구현체
+│   │   ├── naver_dto.py          # Pydantic DTO (네이버 검색어 트렌드)
+│   │   └── NAVER_API_SPEC.md     # NAVER API 명세서
 │   │
 │   └── db/
 │       ├── __init__.py           # db(DBManager 인스턴스) export
@@ -68,7 +71,8 @@ SKN30-2nd-4Team/
 │       │
 │       ├── insert_box_office.ipynb  # 박스오피스 데이터 수집
 │       ├── insert_movie.ipynb       # 영화 상세 + 영화사 수집
-│       └── insert_people.ipynb      # 영화인 ID 매핑 및 캐스팅 구축
+│       ├── insert_people.ipynb      # 영화인 ID 매핑 및 캐스팅 구축
+│       └── insert_naver_trend.ipynb # 네이버 검색 트렌드 수집 및 적재
 │
 └── ml/                           # ML/DL 모델링 (상세: ml/README.md 참조)
     ├── README.md                 # 모델링 작업 가이드 및 협업 규칙
@@ -81,8 +85,7 @@ SKN30-2nd-4Team/
         ├── baseline_feature_table.md      # 피처 설계 명세서
         └── CHANGELOG.md          # 피처 버전 변경 기록
 ```
-
----
+----
 
 ## 4. 핵심 모듈 가이드 (상세 README 참조)
 
@@ -103,6 +106,7 @@ SKN30-2nd-4Team/
 | `companys` / `company_part` | 제작사·배급사 정보 및 영화 관계 | `company_id` / `(company_id, movie_id)` | 브랜드 파워 피처 |
 | `people` / `movie_casting` | 감독·배우 정보 및 출연 관계 | `person_id` / `(person_id, movie_id)` | Star Power 피처 |
 | `holidays` | 공휴일, 연휴 정보 | `holiday_date` | 시즌 피처 |
+| `naver_search_trend` | 네이버 검색 트렌드 (기간별 검색량 점수) | `(movie_id, trend_date)` | 관심도/화제성 피처 |
 
 > `movies.people` 컬럼에는 `{"directors": [...], "actors": [...]}`형태의 JSON이 저장되어 있습니다.  
 > `rank`는 MySQL 예약어이므로 SQL에서 반드시 **백틱**으로 감싸야 합니다: `` `rank` ``
@@ -114,11 +118,11 @@ SKN30-2nd-4Team/
 | 단계 | 내용 | 상태 |
 |------|------|------|
 | 데이터 수집 | 박스오피스, 영화, 영화사 데이터, 영화인 ID 매핑 및 캐스팅 적재 | ✅ 완료 |
-| 피처 엔지니어링 | 공통 피처 테이블 v1 생성 (46개 컬럼) | 🔧 진행중 |
+| 피처 엔지니어링 | 공통 피처 테이블 v1 생성 (46개 컬럼) | 완료 |
 | 피처 엔지니어링 | 피처 버전업 (v2, v3, …) | 🔧 진행중 |
-| EDA + Baseline ML | 탐색적 분석 + Linear, Ridge, Lasso, RF | 📋 예정 |
-| Boosting ML | XGBoost, LightGBM + Optuna 튜닝 | 📋 예정 |
-| 딥러닝 | MLP 회귀 + MLP 분류 | 📋 예정 |
+| EDA + Baseline ML | 탐색적 분석 + Linear, Ridge, Lasso, RF | 🔧 진행중 |
+| Boosting ML | XGBoost, LightGBM + Optuna 튜닝 | 🔧 진행중 |
+| 딥러닝 | MLP 회귀 + MLP 분류 | 🔧 진행중 |
 | 모델 비교 | 전체 모델 성능 비교 + 최적 모델 선정 | 📋 예정 |
 
 > ML/DL 모델링의 작업 목록, 피처 버전업 규칙, 공통 코드, 산출물 작성 규칙은 `ml/README.md` 참조

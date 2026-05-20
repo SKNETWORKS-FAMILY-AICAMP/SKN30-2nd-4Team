@@ -1,0 +1,40 @@
+### 변수 설정 (본인의 네이버 클라이언트 ID와 Secret을 입력하세요)
+# @clientId = YOUR_CLIENT_ID_HERE
+# @clientSecret = YOUR_CLIENT_SECRET_HERE
+@clientId = 5i6jHbacMNwTxWniEjPx
+@clientSecret = nWm2F13Wax
+
+### 네이버 통합 검색어 트렌드 조회
+# @name getSearchTrend
+POST https://openapi.naver.com/v1/datalab/search
+X-Naver-Client-Id: {{clientId}}
+X-Naver-Client-Secret: {{clientSecret}}
+Content-Type: application/json
+
+{
+  "startDate": "2017-01-01",
+  "endDate": "2017-04-30",
+  "timeUnit": "month",
+  "keywordGroups": [
+    {
+      "groupName": "한글",
+      "keywords": [
+        "한글",
+        "korean"
+      ]
+    },
+    {
+      "groupName": "영어",
+      "keywords": [
+        "영어",
+        "english"
+      ]
+    }
+  ],
+  "device": "pc",
+  "ages": [
+    "1",
+    "2"
+  ],
+  "gender": "f"
+}
