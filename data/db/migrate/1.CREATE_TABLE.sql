@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS company_part;
 DROP TABLE IF EXISTS daily_box_office;
 DROP TABLE IF EXISTS daily_market_stats;
 DROP TABLE IF EXISTS holidays;
+DROP TABLE IF EXISTS naver_search_trend;
 DROP TABLE IF EXISTS movies;
 DROP TABLE IF EXISTS people;
 DROP TABLE IF EXISTS companys;
