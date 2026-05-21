@@ -1,0 +1,134 @@
+{
+    "SF": {
+        "scrn_min": 5,
+        "scrn_max": 980,
+        "show_min": 10,
+        "show_max": 4046
+    },
+    "가족": {
+        "scrn_min": 7,
+        "scrn_max": 475,
+        "show_min": 10,
+        "show_max": 1007
+    },
+    "공연": {
+        "scrn_min": 12,
+        "scrn_max": 246,
+        "show_min": 24,
+        "show_max": 694
+    },
+    "공포(호러)": {
+        "scrn_min": 5,
+        "scrn_max": 749,
+        "show_min": 10,
+        "show_max": 2729
+    },
+    "기타": {
+        "scrn_min": 6,
+        "scrn_max": 718,
+        "show_min": 10,
+        "show_max": 2618
+    },
+    "다큐멘터리": {
+        "scrn_min": 5,
+        "scrn_max": 254,
+        "show_min": 10,
+        "show_max": 535
+    },
+    "드라마": {
+        "scrn_min": 5,
+        "scrn_max": 583,
+        "show_min": 10,
+        "show_max": 1487
+    },
+    "멜로/로맨스": {
+        "scrn_min": 5,
+        "scrn_max": 533,
+        "show_min": 10,
+        "show_max": 1623
+    },
+    "뮤지컬": {
+        "scrn_min": 5,
+        "scrn_max": 868,
+        "show_min": 10,
+        "show_max": 2504
+    },
+    "미스터리": {
+        "scrn_min": 5,
+        "scrn_max": 992,
+        "show_min": 10,
+        "show_max": 3524
+    },
+    "미정": {
+        "scrn_min": 8,
+        "scrn_max": 200,
+        "show_min": 10,
+        "show_max": 500
+    },
+    "범죄": {
+        "scrn_min": 5,
+        "scrn_max": 1029,
+        "show_min": 10,
+        "show_max": 3990
+    },
+    "사극": {
+        "scrn_min": 5,
+        "scrn_max": 828,
+        "show_min": 10,
+        "show_max": 3665
+    },
+    "성인물(에로)": {
+        "scrn_min": 20,
+        "scrn_max": 200,
+        "show_min": 20,
+        "show_max": 500
+    },
+    "스릴러": {
+        "scrn_min": 6,
+        "scrn_max": 931,
+        "show_min": 10,
+        "show_max": 3773
+    },
+    "애니메이션": {
+        "scrn_min": 8,
+        "scrn_max": 799,
+        "show_min": 10,
+        "show_max": 2041
+    },
+    "액션": {
+        "scrn_min": 5,
+        "scrn_max": 1886,
+        "show_min": 10,
+        "show_max": 8000
+    },
+    "어드벤처": {
+        "scrn_min": 5,
+        "scrn_max": 2055,
+        "show_min": 10,
+        "show_max": 8000
+    },
+    "전쟁": {
+        "scrn_min": 5,
+        "scrn_max": 643,
+        "show_min": 10,
+        "show_max": 1497
+    },
+    "코미디": {
+        "scrn_min": 5,
+        "scrn_max": 711,
+        "show_min": 10,
+        "show_max": 2326
+    },
+    "판타지": {
+        "scrn_min": 5,
+        "scrn_max": 1624,
+        "show_min": 10,
+        "show_max": 5566
+    },
+    "default": {
+        "scrn_min": 5,
+        "scrn_max": 926,
+        "show_min": 10,
+        "show_max": 3663
+    }
+}

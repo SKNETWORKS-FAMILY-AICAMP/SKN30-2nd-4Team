@@ -121,11 +121,12 @@ SKN30-2nd-4Team/
 | 피처 엔지니어링 | 공통 피처 테이블 v1 생성 (26개 컬럼) | ✅ 완료 |
 | 피처 엔지니어링 | v2 스펙 확립 (누수 제거, 네이버 트렌드 4종, 장르 타겟 인코딩 적용) | ✅ 완료 |
 | 피처 엔지니어링 | v2 신규 피처 3종 추가 (관람료, 코로나 침체기, 성수기) | ✅ 완료 |
-| EDA + Baseline ML | 탐색적 분석 + Linear, Ridge, Lasso, RF | 🔧 진행중 |
-| Boosting ML | XGBoost, LightGBM + Optuna 튜닝 | 🔧 진행중 |
-| 딥러닝 | MLP 회귀 + MLP 분류 | 🔧 진행중 |
-| 모델 비교 | 전체 모델 성능 비교 + 최적 모델 선정 (Stage 1 앙상블 확정) | 📋 예정 |
-| 시뮬레이터 | Stage 2 배급 스케일 보정 모델 학습 (`scrnCnt_day1`, `showCnt_day1`) | 📋 예정 |
+| EDA + Baseline ML | 탐색적 분석 + Linear, Ridge, Lasso, RF | ✅ 완료 |
+| Boosting ML | XGBoost, LightGBM, CatBoost + Optuna 튜닝 (V3) | ✅ 완료 |
+| 딥러닝 | MLP 회귀 (PyTorch) | ✅ 완료 |
+| 모델 비교 | 전체 모델 성능 비교 + 최적 모델 선정 (CatBoost 8 : XGBoost 2 앙상블 확정, R²=0.5638) | ✅ 완료 |
+| 시뮬레이터 | Stage 2 단조 제약 XGBoost 학습 (R²=0.6682) | ✅ 완료 |
+| 산출물 | 인공지능 학습 결과서 작성 | 진행 중 |
 | 배포 | Streamlit What-If 시뮬레이터 웹 데모 구현 | 📋 예정 |
 
 > ML/DL 모델링의 작업 목록, 피처 버전업 규칙, 공통 코드, 산출물 작성 규칙은 `ml/README.md` 참조
