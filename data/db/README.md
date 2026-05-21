@@ -135,6 +135,8 @@ mysqldump -u [사용자] -p[비밀번호] [DB이름] [테이블1] [테이블2] >
 **예시:**
 ```bash
 mysqldump -u root -p password123 film movies daily_box_office > historical_data.sql
+
+docker exec -i mysql-server-8.0.45 mysqldump -uroot -pa1234 film > my_database_backup.sql
 ```
 
 > [!CAUTION]
