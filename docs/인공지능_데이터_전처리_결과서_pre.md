@@ -217,7 +217,7 @@
     * **핵심 원칙**: 해당 영화 개봉일 이전의 과거 실적만 참조하여 데이터 누수를 방지합니다.
     * **산출 공식**:
 
-      $$\text{director\_avg\_audi}(X) = \frac{1}{N} \sum_{i=1}^{N} \text{total\_audience}(f_i), \quad \text{where } \text{open\_dt}(f_i) < D_X$$
+      director_avg_audi(X) = (1/N) * Σ total_audience(f_i),  where open_dt(f_i) < D_X
 
     * **Cold Start 처리**: 신인 감독/배우 등 과거 데이터가 없는 경우 → **0** (모델이 '검증된 실적 없음'으로 해석)
     * **신인 여부 플래그**: v2부터 `is_new_director`, `is_new_lead` 이진 플래그를 추가하여 Cold Start 케이스를 모델이 명시적으로 구분할 수 있도록 보완합니다.
