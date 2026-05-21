@@ -46,7 +46,7 @@ if [ -n "$STEP" ]; then
     echo "🚀 마이그레이션을 시작합니다... (대상: $STEP번 파일, Docker: $IS_DOCKER, 컨테이너: $CONTAINER_NAME)"
 else
     # 지정되지 않은 경우 전체 파일 선택
-    FILES=$(ls $MIGRATE_DIR/*.sql | sort)
+    FILES=$(ls $MIGRATE_DIR/*.sql | sort -V)
     echo "🚀 마이그레이션을 시작합니다... (대상: 전체 파일, Docker: $IS_DOCKER, 컨테이너: $CONTAINER_NAME)"
 fi
 
