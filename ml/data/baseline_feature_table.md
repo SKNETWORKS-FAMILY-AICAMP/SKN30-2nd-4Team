@@ -9,7 +9,7 @@
 ```
 feature_table_v1.csv 
 ─────────────────────────────────────
-[식별]  movie_id
+[식별]  movie_id, title
 [타겟]  total_audience, log_audience, hit_class
 [메타]  genre, rating_encoded, is_korean, runtime
 [시간]  open_month, open_day_of_week, is_holiday_release, holiday_nearby_count, is_summer, is_winter
@@ -17,7 +17,7 @@ feature_table_v1.csv
 [브랜드] distributor_avg_audi, distributor_movie_count, producer_avg_audi, producer_movie_count
 [경쟁]  same_week_releases, market_avg_audi_7d
 ─────────────────────────────────────
-총 46개 피처 (식별자 1개, 타겟 3개, 피처 42개)
+총 26개 컬럼 (식별자 2개, 타겟 3개, 피처 21개)
 ```
 
 
