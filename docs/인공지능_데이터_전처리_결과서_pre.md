@@ -135,7 +135,7 @@
     * **클래스 불균형 심각성 및 2클래스 재설계**:
       4구간 분류에서 클래스 간 샘플 수 불균형이 극심하게 나타나, 이진 분류(100만 미만 / 100만 이상)로 재설계하였으나 예측력 향상이 제한적이었습니다.
 
-      > 📌 **(images/class_bar.png)**
+       ![HIT_CLASS](images/class_bar.png)
       > **내용**: `hit_class` 클래스별 샘플 수 분포 막대 그래프 — 클래스 불균형 정도를 시각적으로 표현
 
     * **v2부터 분류 타겟 완전 폐기**:
@@ -165,7 +165,7 @@
 
       성수기 영화는 비성수기 대비 약 **1.6 ~ 1.8배** 높은 평균 관객수를 기록하여 `is_peak_season` 피처의 유효성이 검증되었습니다.
 
-      > 📌 **(images/season.png)**
+      ![SEASON](images/time.png)
       > **내용**: 개봉 월별 평균 관객수 바 차트 — 성수기(7, 8, 12, 1월) 구간 강조 표시
 
     * **동시 개봉 경쟁 강도 (`same_week_releases`) 분석**:
@@ -217,7 +217,7 @@
     * **핵심 원칙**: 해당 영화 개봉일 이전의 과거 실적만 참조하여 데이터 누수를 방지합니다.
     * **산출 공식**:
 
-      $$\text{director\_avg\_audi}(X) = \frac{1}{N} \sum_{i=1}^{N} \text{total\_audience}(f_i), \quad \text{where } \text{open\_dt}(f_i) < D_X$$
+      director_avg_audi(X) = (1/N) * Σ total_audience(f_i),  where open_dt(f_i) < D_X
 
     * **Cold Start 처리**: 신인 감독/배우 등 과거 데이터가 없는 경우 → **0** (모델이 '검증된 실적 없음'으로 해석)
     * **신인 여부 플래그**: v2부터 `is_new_director`, `is_new_lead` 이진 플래그를 추가하여 Cold Start 케이스를 모델이 명시적으로 구분할 수 있도록 보완합니다.
