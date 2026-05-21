@@ -204,3 +204,19 @@ INSERT INTO holidays VALUES ('2025-10-06', '추석 연휴', 'National', TRUE);
 INSERT INTO holidays VALUES ('2025-10-07', '추석', 'National', TRUE);
 INSERT INTO holidays VALUES ('2025-10-08', '추석 연휴', 'National', TRUE);
 INSERT INTO holidays VALUES ('2025-10-09', '한글날', 'National', TRUE);
+INSERT INTO holidays (holiday_date, holiday_name, holiday_type, is_weekend_effect) VALUES
+('2025-12-25', '기독탄신일(성탄절)', 'National', FALSE), -- 목요일
+('2026-01-01', '신정', 'National', FALSE),          -- 목요일
+('2026-02-16', '설날 연휴', 'National', TRUE),         -- 월요일 (주말 연휴 연결)
+('2026-02-17', '설날', 'National', TRUE),            -- 화요일
+('2026-02-18', '설날 연휴', 'National', TRUE),         -- 수요일
+('2026-03-02', '삼일절 대체공휴일', 'National', TRUE),   -- 월요일 (3/1 일요일 대체)
+('2026-05-05', '어린이날', 'National', FALSE),         -- 화요일
+('2026-05-25', '부처님오신날 대체공휴일', 'National', TRUE), -- 월요일 (5/24 일요일 대체)
+('2026-08-17', '광복절 대체공휴일', 'National', TRUE),   -- 월요일 (8/15 토요일 대체)
+('2026-09-24', '추석 연휴', 'National', TRUE),         -- 목요일 (추석 연휴 시작)
+('2026-09-25', '추석', 'National', TRUE),            -- 금요일 (추석 당일)
+('2026-09-28', '추석 대체공휴일', 'National', TRUE),   -- 월요일 (9/26 토요일 대체)
+('2026-10-05', '개천절 대체공휴일', 'National', TRUE),   -- 월요일 (10/3 토요일 대체)
+('2026-10-09', '한글날', 'National', TRUE),           -- 금요일 (주말 연휴 연결)
+('2026-12-25', '기독탄신일(성탄절)', 'National', TRUE);  -- 금요일 (주말 연휴 연결)

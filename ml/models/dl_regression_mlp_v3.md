@@ -44,3 +44,12 @@ params = {
     "no_encode_scale_train": no_encode_scale_train,
     "drop_when_train": drop_when_train,
 }
+
+# 추신 (홍철민)
+```
+# 03_deep_learning_v3.ipynb의 데이터 분할 코드 (Line 792)
+X_train, X_val, y_train, y_val = train_test_split(
+    X, y, test_size=0.2, random_state=42  # ⚠️ shuffle=True가 기본값으로 적용됨!
+)
+```
+해당 결과는 시계열 분할을 하지 않은 셔플 된 학습 결과이므로 r2값이 높게 측정 된 것 같습니다.
