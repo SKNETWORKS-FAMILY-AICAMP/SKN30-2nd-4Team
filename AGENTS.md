@@ -94,7 +94,7 @@ SKN30-2nd-4Team/
 - **데이터 수집 (`data/api/`)**: API 호출 및 DTO 처리 방식 ➡️ [`data/api/README.md`](data/api/README.md)
 - **데이터베이스 (`data/db/`)**: DB 쿼리(CRUD), 대량 삽입(Upsert), 초기화(migrate) 규칙 ➡️ [`data/db/README.md`](data/db/README.md)
 - **공통 설정 (`util/`)**: 환경 변수 및 설정 객체 관리 ➡️ [`util/README.md`](util/README.md)
-- **ML 모델링 (`ml/`)**: 작업 분담, 공통 코드, 피처 버전업 규칙 ➡️ [`ml/README.md`](ml/README.md)
+- **ML 모델링 (`ml/`)**: 작업 분담, 공통 코드, 피처 버전업 규칙, **2-Stage 시뮬레이터 모델 설계** ➡️ [`ml/README.md`](ml/README.md)
 
 ## 5. 데이터베이스 스키마
 
@@ -118,11 +118,40 @@ SKN30-2nd-4Team/
 | 단계 | 내용 | 상태 |
 |------|------|------|
 | 데이터 수집 | 박스오피스, 영화, 영화사 데이터, 영화인 ID 매핑 및 캐스팅 적재 | ✅ 완료 |
-| 피처 엔지니어링 | 공통 피처 테이블 v1 생성 (26개 컬럼) | 완료 |
-| 피처 엔지니어링 | 피처 버전업 (v2, v3, …) | 🔧 진행중 |
+| 피처 엔지니어링 | 공통 피처 테이블 v1 생성 (26개 컬럼) | ✅ 완료 |
+| 피처 엔지니어링 | v2 스펙 확립 (누수 제거, 네이버 트렌드 4종, 장르 타겟 인코딩 적용) | ✅ 완료 |
+| 피처 엔지니어링 | v2 신규 피처 3종 추가 (관람료, 코로나 침체기, 성수기) | ✅ 완료 |
 | EDA + Baseline ML | 탐색적 분석 + Linear, Ridge, Lasso, RF | 🔧 진행중 |
 | Boosting ML | XGBoost, LightGBM + Optuna 튜닝 | 🔧 진행중 |
 | 딥러닝 | MLP 회귀 + MLP 분류 | 🔧 진행중 |
-| 모델 비교 | 전체 모델 성능 비교 + 최적 모델 선정 | 📋 예정 |
+| 모델 비교 | 전체 모델 성능 비교 + 최적 모델 선정 (Stage 1 앙상블 확정) | 📋 예정 |
+| 시뮬레이터 | Stage 2 배급 스케일 보정 모델 학습 (`scrnCnt_day1`, `showCnt_day1`) | 📋 예정 |
+| 배포 | Streamlit What-If 시뮬레이터 웹 데모 구현 | 📋 예정 |
 
 > ML/DL 모델링의 작업 목록, 피처 버전업 규칙, 공통 코드, 산출물 작성 규칙은 `ml/README.md` 참조
+
+---
+
+## 7. 2-Stage 시뮬레이터 모델 개요
+
+본 프로젝트의 최종 산출물은 **"개봉 첫날 스크린 확보 규모에 따른 최종 관객수 변화를 시뮬레이션하는 배급 전략 의사결정 도구"** 입니다.
+
+### 아키텍처
+
+```
+Stage 1 (흥행 잠재력 모델)
+  Input  → 개봉 전 피처만 (배우, 감독, 버즈, 장르, 시즌 등)
+  Output → pred_potential (스크린 요인을 제외한 순수 모객력 점수)
+
+                    ↓ pred_potential 전달
+
+Stage 2 (배급 스케일 보정 모델 = 시뮬레이터)
+  Input  → [pred_potential] + [scrnCnt_day1, showCnt_day1]
+  Output → 최종 예상 관객수
+```
+
+- **Stage 1**: 개봉 전 피처만으로 영화 콘텐츠 자체의 순수 흥행 잠재력을 예측
+- **Stage 2**: Stage 1 예측값에 스크린 수(제어 변수)를 결합하여 최종 관객수를 보정
+- 단일 모델에 스크린 수를 병합하지 않는 이유: 내생성(Endogeneity)으로 인한 Feature Importance 독점 방지
+
+> 시뮬레이터의 상세 설계, 핵심 변수 명세, 학습 시 주의사항은 [`ml/README.md`](ml/README.md)의 **"상영관·상영 수 시뮬레이터 모델"** 섹션 참조
