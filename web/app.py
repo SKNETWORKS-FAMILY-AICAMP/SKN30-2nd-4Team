@@ -13,7 +13,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # 패키지화된 절대 경로 유틸리티 임포트
-from web.utils.loader import load_models, load_data
+from web.utils.loader import load_models, load_data, CUTOFF_DATE
 from web.utils.predictor import (
     compute_potential,
     make_prediction,
@@ -37,6 +37,13 @@ try:
     s1, s2 = load_models()
     df_2026, guardrails = load_data()
     df_2026 = df_2026.copy()  # Protect cached dataframe from mutation
+    
+    # Parse CUTOFF_DATE to 'M.D' format for UI label synchronization
+    try:
+        date_parts = CUTOFF_DATE.split('-')
+        cutoff_formatted = f"{int(date_parts[1])}.{int(date_parts[2])}"
+    except Exception:
+        cutoff_formatted = "5.21"
 except Exception as e:
     st.error(f"⚠️ 모델 또는 데이터를 불러오는 중에 오류가 발생했습니다: {e}")
     st.stop()
@@ -167,7 +174,7 @@ with st.container(border=True):
             )
         with inner_row2_col1:
             st.metric(
-                label="📈 실제 최종 관객수 (5.20 기준)",
+                label=f"📈 실제 최종 관객수 ({cutoff_formatted} 기준)",
                 value=f"{actual_audience:,} 명" if actual_audience > 0 else "데이터 없음",
             )
         with inner_row2_col2:
