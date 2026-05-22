@@ -33,7 +33,7 @@
 
 ## 🛠️ 기술 스택
 
-![tech_stack](docs/images/tech_stack.svg)
+![tech_stack](docs/images/tech_stack_new.svg)
 
 ---
 
