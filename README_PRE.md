@@ -54,7 +54,7 @@ Stage 2 — 배급 스케일 보정 모델 (What-If 시뮬레이터)
 |:---|:---|:---|
 | 목적 | 콘텐츠 고유 흥행 체급 진단 | 배급 규모에 따른 관객수 보정 |
 | 모델 | CatBoost 80% + XGBoost 20% Stacking | XGBoost (Monotonic Constraints) |
-| 최종 성능 | R² 0.5638 / RMSE 1.3459 | R² 0.6682 / RMSE 1.1739 |
+| 최종 성능 | R² 0.5638 / RMSE 1.3459 | R² 0.5517 / RMSE 1.3645 |
 
 ---
 
