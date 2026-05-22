@@ -16,6 +16,9 @@ def load_models():
     s2_model = joblib.load(s2_path)
     return s1_model, s2_model
 
+# 데이터 필터링 기준일 정의 (2026년 개봉일 기준)
+CUTOFF_DATE = '2026-05-21'
+
 @st.cache_data
 def load_data():
     """Load pre-generated 2026 features and guardrails JSON."""
@@ -25,8 +28,8 @@ def load_data():
     df = pd.read_csv(csv_path)
     df['movie_id'] = df['movie_id'].astype(str)
     
-    # 5월 20일 이전 개봉작만 필터링
-    df = df[df['open_date'] < '2026-05-20']
+    # CUTOFF_DATE 이전 개봉작만 필터링
+    df = df[df['open_date'] <= CUTOFF_DATE]
     
     # Sort by open date descending (newest first)
     df = df.sort_values(by='open_date', ascending=False).reset_index(drop=True)
