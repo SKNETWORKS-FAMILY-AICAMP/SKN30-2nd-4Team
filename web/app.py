@@ -13,7 +13,12 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 # 패키지화된 절대 경로 유틸리티 임포트
-from web.utils.loader import load_models, load_data, CUTOFF_DATE
+from web.utils.loader import load_models, load_data
+try:
+    from web.utils.loader import CUTOFF_DATE
+except ImportError:
+    # 원격 저장소 배포 시 loader.py가 아직 업데이트되지 않았을 경우를 대비한 가드레일 폴백
+    CUTOFF_DATE = '2026-05-21'
 from web.utils.predictor import (
     compute_potential,
     make_prediction,
