@@ -6,7 +6,7 @@
 > 과거 8년간의 KOBIS 박스오피스 및 Naver 검색 트렌드 데이터를 학습한 **2-Stage AI 앙상블 모델**로,  
 > 개봉 전 콘텐츠 잠재력을 진단하고 배급 전략에 따른 예상 관객수를 실시간 시뮬레이션합니다.
 
-🔗 **Live Demo**: [machine-dongjin.streamlit.app](https://machine-dongjin.streamlit.app/)
+🔗 **Live Demo**: [machine-dongjin.streamlit.app](https://machine-dongjin.streamlit.app/) (05-24일까지 오픈)
 
 ---
 
@@ -14,11 +14,11 @@
 
 | 이름 | 역할 |
 |:---:|:---:|
-| 홍철민 | 데이터수집, 모델 비교 및 선정, 데모 구현  |
+| 홍철민 | 데이터 수집, 모델 비교 및 선정, 데모 구현  |
 | 채동현 | 데이터 수집 및 전처리, EDA_BASELINE-BOOSTING_ML학습 |
 | 박지유 |  |
 | 김범중 |  |
-| 이승민 | 데이터수집 |
+| 이승민 | 데이터 수집 |
 
 ---
 
@@ -122,17 +122,16 @@ Stage 2 — 배급 스케일 보정 모델 (What-If 시뮬레이터)
 ## 🚀 실행 방법
 
 ```bash
+uv sync
+
+# (선택사항: 적재한 데이터를 확인하고 싶은 경우) .env 파일 생성 후 쉘 실행 권한 부여 (필요 시)
+chmod +x migrate.sh
+# 전체 db 마이그레이션 실행 (테이블 생성 + 데이터 적재)
+./migrate.sh
+
 # 로컬 실행
-uv run streamlit run web/app.py --server.port 8515
+uv run streamlit run web/app.py
 ```
-
-**Streamlit Cloud 배포 설정**
-
-| 항목 | 값 |
-|:---|:---|
-| Repository | `SKNETWORKS-FAMILY-AICAMP/SKN30-2nd-4Team` |
-| Branch | `main` |
-| Main file path | `main.py` |
 
 ---
 
@@ -140,7 +139,6 @@ uv run streamlit run web/app.py --server.port 8515
 
 ```
 SKN30-2nd-4Team/
-├── main.py                     # Streamlit Cloud 배포 엔트리포인트
 ├── pyproject.toml              # 의존성 관리
 │
 ├── data/
