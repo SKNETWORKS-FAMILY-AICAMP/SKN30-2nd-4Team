@@ -48,6 +48,41 @@ def apply_custom_css():
                 -webkit-background-clip: text;
                 -webkit-text-fill-color: transparent;
             }
+            /* 6. Columns height auto-matching to the maximum height of the row (Flex stretch chaining with !important) */
+            div[data-testid="column"] {
+                display: flex !important;
+                flex-direction: column !important;
+            }
+            div[data-testid="column"] > div {
+                flex-grow: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                height: 100% !important;
+            }
+            div[data-testid="column"] [data-testid="stVerticalBlockBorderWrapper"] {
+                flex-grow: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                height: 100% !important;
+            }
+            div[data-testid="column"] [data-testid="stVerticalBlock"] {
+                flex-grow: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                height: 100% !important;
+            }
+            div[data-testid="column"] [data-testid="stVerticalBlockBorderWrapper"] > div {
+                flex-grow: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                height: 100% !important;
+            }
+            div[data-testid="column"] [data-testid="stVerticalBlockBorderWrapper"] > div > div {
+                flex-grow: 1 !important;
+                display: flex !important;
+                flex-direction: column !important;
+                height: 100% !important;
+            }
         </style>
     """, unsafe_allow_html=True)
 
