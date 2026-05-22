@@ -1,11 +1,26 @@
 import os
-import json
-import joblib
+import sys
+
+# 실행 방식(streamlit run web/app.py 등)과 관계없이 루트 경로를 완벽 해석하도록 sys.path 보정
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+
 import numpy as np
 import pandas as pd
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+
+# 패키지화된 절대 경로 유틸리티 임포트
+from web.utils.loader import load_models, load_data
+from web.utils.predictor import (
+    compute_potential,
+    make_prediction,
+    calculate_importance,
+    find_elbow_point
+)
+from web.utils.styles import apply_custom_css, FEATURE_NAME_MAP
 
 # ── [1] Streamlit Page Configuration ──
 st.set_page_config(
@@ -14,87 +29,22 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# ── [2] Data & Model Cache Loaders ──
-@st.cache_resource
-def load_models():
-    """Load Stage 1 Stacking Ensemble and Stage 2 Simulator models."""
-    s1_path = '/home/hong/project/SKN30-2nd-4Team/ml/models/stage1_ensemble.pkl'
-    s2_path = '/home/hong/project/SKN30-2nd-4Team/ml/models/stage2_simulator.pkl'
-    
-    s1_model = joblib.load(s1_path)
-    s2_model = joblib.load(s2_path)
-    return s1_model, s2_model
+# Premium CSS 스타일 및 토큰 적용
+apply_custom_css()
 
-@st.cache_data
-def load_data():
-    """Load pre-generated 2026 features and guardrails JSON."""
-    csv_path = '/home/hong/project/SKN30-2nd-4Team/web/feature_table_2026.csv'
-    json_path = '/home/hong/project/SKN30-2nd-4Team/web/genre_guardrails.json'
-    
-    df = pd.read_csv(csv_path)
-    df['movie_id'] = df['movie_id'].astype(str)
-    # Sort by open date descending (newest first)
-    df = df.sort_values(by='open_date', ascending=False).reset_index(drop=True)
-    
-    with open(json_path, 'r', encoding='utf-8') as f:
-        guardrails = json.load(f)
-        
-    return df, guardrails
-
-# Load resources
+# ── [2] Data & Model Resource Loaders ──
 try:
     s1, s2 = load_models()
     df_2026, guardrails = load_data()
+    df_2026 = df_2026.copy()  # Protect cached dataframe from mutation
 except Exception as e:
     st.error(f"⚠️ 모델 또는 데이터를 불러오는 중에 오류가 발생했습니다: {e}")
     st.stop()
 
-# Calculate Stacking Weighted Global Feature Importance
-cat_imp = np.array(s1['base_models']['cat'].feature_importances_)
-cat_imp = cat_imp / cat_imp.sum()
-
-xgb_imp = np.array(s1['base_models']['xgb'].feature_importances_)
-xgb_imp = xgb_imp / xgb_imp.sum()
-
-# Weighted combination (8:2 Stacking weight)
-weighted_imp = 0.8 * cat_imp + 0.2 * xgb_imp
-df_importance = pd.DataFrame({
-    'feature': s1['feature_columns'],
-    'importance': weighted_imp
-}).sort_values(by='importance', ascending=True).tail(10)  # Top 10 for display
-
-# Rename features to clean Korean names for visual presentation
-feature_name_map = {
-    'runtime': '상영시간 (분)',
-    'director_avg_audi': '감독 과거 평균 관객수 (Log)',
-    'lead_actor_avg_audi': '주연배우 과거 평균 관객수 (Log)',
-    'distributor_avg_audi': '배급사 과거 평균 관객수 (Log)',
-    'producer_avg_audi': '제작사 과거 평균 관객수 (Log)',
-    'trend_pre7_avg': '개봉 전 7일 평균 검색량',
-    'trend_pre7_max': '개봉 전 7일 최대 검색량',
-    'trend_growth_rate': '검색량 증가 추세',
-    'trend_pre30_avg': '개봉 전 30일 평균 검색량',
-    'relative_search_share': '경쟁작 대비 검색 점유율',
-    'market_avg_audi_7d': '개봉 직전 7일 시장 관객수 (Log)',
-    'ticket_price_pre30': '개봉 시점 티켓 단가 수준',
-    'open_day_of_week': '개봉 요일',
-    'is_peak_season': '극성수기 개봉 여부',
-    'is_covid_period': '코로나19 침체기 여부',
-    'is_korean': '한국 영화 여부',
-    'holiday_nearby_count': '개봉 전후 공휴일 수',
-    'is_holiday_release': '공휴일 개봉 여부',
-    'same_week_releases': '동시기 경쟁 신작 수',
-    'is_new_director': '신인 감독 여부',
-    'is_new_lead': '신인 배우 여부',
-    'is_new_producer': '신생 제작사 여부',
-    'is_new_distributor': '신생 배급사 여부',
-    'genre_avg_audi': '장르 과거 흥행력 (Log)',
-    'rating_15세관람가': '관람등급_15세',
-    'rating_15세이상관람가': '관람등급_15세이상',
-    'rating_전체관람가': '관람등급_전체',
-    'rating_청소년관람불가': '관람등급_청소년관람불가'
-}
-df_importance['feature_kr'] = df_importance['feature'].map(feature_name_map).fillna(df_importance['feature'])
+# Stacking weighted global feature importance 계산 (Top 10)
+df_importance = calculate_importance(s1)
+df_importance['feature_kr'] = df_importance['feature'].map(FEATURE_NAME_MAP).fillna(df_importance['feature'])
+df_importance = df_importance.tail(10)  # Top 10
 
 # ── [3] Streamlit Sidebar: Movie Selection & Meta Info ──
 st.sidebar.title("🎬 KO-BOX PREDICT 2026")
@@ -129,7 +79,7 @@ with st.sidebar.expander("🔍 28개 입력 피처 데이터 상세"):
     display_features = {}
     for col in s1['feature_columns']:
         if col in movie_row:
-            display_features[feature_name_map.get(col, col)] = movie_row[col]
+            display_features[FEATURE_NAME_MAP.get(col, col)] = movie_row[col]
     st.write(display_features)
 
 # ── [4] Main Area Layout ──
@@ -137,27 +87,8 @@ st.title("🎬 2026 개봉작 흥행 예측 & 스크린 시뮬레이터")
 st.write("학습되지 않은 2026년 개봉작 데이터를 로드하여 영화 고유의 콘텐츠 잠재력에 스크린 배급 조절을 시뮬레이션합니다.")
 
 # ── [5] Stage 1 Inference ──
-X_s1 = pd.DataFrame(0.0, index=[0], columns=s1['feature_columns'])
-for col in s1['feature_columns']:
-    if col in movie_row:
-        X_s1.at[0, col] = float(movie_row[col])
-
-# Scale MLP
-scaler = s1['mlp_scaler']
-X_s1_scaled = pd.DataFrame(scaler.transform(X_s1), columns=X_s1.columns)
-
-# Base model predictions for Stacking input
-preds = {}
-for name in s1['model_names']:
-    model = s1['base_models'][name]
-    if name == 'mlp':
-        preds[name] = model.predict(X_s1_scaled)[0]
-    else:
-        preds[name] = model.predict(X_s1)[0]
-
-# Calculate Stacking Potential Score
-X_meta = pd.DataFrame([preds], columns=s1['model_names'])
-pred_potential = s1['meta_model'].predict(X_meta)[0]
+# 영화 자체 고유의 콘텐츠 잠재력 예측 점수 산출
+pred_potential = compute_potential(s1, movie_row)
 
 # ── [6] AREA A: 요약 관객수 카드 ──
 st.subheader("📊 관객수 요약")
@@ -166,86 +97,126 @@ st.subheader("📊 관객수 요약")
 genre = movie_row['genre']
 genre_limit = guardrails.get(genre, guardrails['default'])
 
-# Helper function for predictions
-def make_prediction(scrn, show):
-    X_s2 = pd.DataFrame([{
-        'pred_potential': pred_potential,
-        'log_scrnCnt_day1': np.log1p(scrn),
-        'log_showCnt_day1': np.log1p(show)
-    }], columns=['pred_potential', 'log_scrnCnt_day1', 'log_showCnt_day1'])
-    pred_log = s2.predict(X_s2)[0]
-    return int(np.expm1(pred_log))
-
 # Base prediction with actual screens
 actual_scrn = float(movie_row['scrnCnt_day1'])
 actual_show = float(movie_row['showCnt_day1'])
-pred_actual_setup = make_prediction(actual_scrn, actual_show)
-actual_audience = int(movie_row['total_audience'])
+pred_actual_setup = make_prediction(s2, pred_potential, actual_scrn, actual_show)
+
+raw_audi = movie_row.get('total_audience', 0)
+actual_audience = int(raw_audi) if pd.notna(raw_audi) else 0
+
+# Stage 1: 순수 콘텐츠 흥행 잠재력 (배급/스크린 효과가 완전히 배제된 순수 관객 동원력)
+potential_audience = max(0, int(np.expm1(pred_potential)))
 
 # ── [7] AREA B: What-If 시뮬레이터 ──
 st.subheader("💡 What-If 배급 스케일 시뮬레이터")
-st.write(f"**{genre}** 장르의 과거 실제 데이터 분포에 맞추어 슬라이더의 범위가 동적으로 조정되었습니다 (Guardrails 적용).")
+
+# 실제 데이터 기반 개별 체급 동적 가드레일 설정 (실제값의 30% ~ 200%)
+# 실제 데이터가 수집되지 않은 예외적 케이스(0 이하)일 경우 장르 가드레일로 폴백
+if actual_scrn > 0:
+    scrn_min_adj = max(5, int(actual_scrn * 0.3))
+    scrn_max_adj = int(actual_scrn * 2.0)
+    
+    st.info(f"🛡️ **체급 기반 가드레일 활성화**: 해당 영화의 실제 개봉 첫날 스케일({int(actual_scrn):,}개 스크린) 대비 **30% ~ 200% 신뢰 구간** 내에서 슬라이더 범위가 엄격하게 제한됩니다. (외삽 오류 방지)")
+else:
+    scrn_min_adj = int(genre_limit['scrn_min'])
+    scrn_max_adj = int(genre_limit['scrn_max'])
+    
+    st.info(f"🛡️ **장르 기반 가드레일 활성화**: {genre} 장르의 과거 실제 데이터 분포(과거 상위 95%)에 기반하여 안전 범위가 제어됩니다.")
+
+if actual_show > 0:
+    show_min_adj = max(10, int(actual_show * 0.3))
+    show_max_adj = int(actual_show * 2.0)
+else:
+    show_min_adj = int(genre_limit['show_min'])
+    show_max_adj = int(genre_limit['show_max'])
 
 col_slider1, col_slider2 = st.columns(2)
 
 with col_slider1:
     sim_scrn = st.slider(
         "🖥️ 시뮬레이션 스크린 수 (개봉 첫날)",
-        min_value=int(genre_limit['scrn_min']),
-        max_value=int(genre_limit['scrn_max']),
-        value=int(np.clip(actual_scrn, genre_limit['scrn_min'], genre_limit['scrn_max'])),
-        step=5
+        min_value=scrn_min_adj,
+        max_value=scrn_max_adj,
+        value=int(actual_scrn) if actual_scrn > 0 else scrn_min_adj,
+        step=5,
+        help="극장에서 확보한 상영관(스크린)의 개수입니다. 실제 스펙 대비 30% ~ 200% 범위 내에서 조절 가능합니다."
     )
 
 with col_slider2:
-    # We clip the actual shows to fit within the show limits
     sim_show = st.slider(
         "🎥 시뮬레이션 상영 횟수 (개봉 첫날)",
-        min_value=int(genre_limit['show_min']),
-        max_value=int(genre_limit['show_max']),
-        value=int(np.clip(actual_show, genre_limit['show_min'], genre_limit['show_max'])),
-        step=10
+        min_value=show_min_adj,
+        max_value=show_max_adj,
+        value=int(actual_show) if actual_show > 0 else show_min_adj,
+        step=10,
+        help="확보한 스크린에서 하루 동안 상영하는 총 횟수입니다. 실제 스펙 대비 30% ~ 200% 범위 내에서 조절 가능합니다."
     )
 
+# 유저가 설정한 시뮬레이션 배급 전략(비율) 산출
+strategy_ratio = sim_show / sim_scrn if sim_scrn > 0 else 4.0
+
+# 물리적 제약조건 (회차율) 검증 및 UI 표시
+if strategy_ratio < 1.0:
+    st.warning(f"⚠️ **물리적 배급 경고**: 스크린당 평균 상영 횟수가 **{strategy_ratio:.2f}회**로 지나치게 낮습니다. (통상 1회 이상 운영)")
+elif strategy_ratio > 8.0:
+    st.error(f"🚨 **물리적 배급 초과**: 스크린당 평균 상영 횟수가 **{strategy_ratio:.2f}회**입니다. 하루 상영 시간 한계를 초과했을 가능성이 큽니다. (상업영화 통상 3~6회)")
+else:
+    st.success(f"ℹ️ **배급 전략 비율**: 스크린 당 평균 **{strategy_ratio:.1f}회** 상영 (물리적으로 실현 가능한 적정 범위)")
+
 # Current simulated prediction
-sim_pred = make_prediction(sim_scrn, sim_show)
+sim_pred = make_prediction(s2, pred_potential, sim_scrn, sim_show)
 
 # Display METRIC CARDS based on slider selection
-metric_col1, metric_col2, metric_col3 = st.columns(3)
+metric_col1, metric_col2, metric_col3, metric_col4 = st.columns(4)
 
 with metric_col1:
     st.metric(
-        label="🎯 시뮬레이션 예상 관객수",
+        label="🎯 시뮬레이션 예상 최종 관객수",
         value=f"{sim_pred:,} 명",
         delta=f"{sim_pred - actual_audience:+,} 명 (실제 관객 대비)" if actual_audience > 0 else None
     )
 
 with metric_col2:
     st.metric(
-        label="📈 실제 최종 관객수",
-        value=f"{actual_audience:,} 명" if actual_audience > 0 else "데이터 없음",
+        label="✨ 순수 콘텐츠 잠재 흥행력",
+        value=f"{potential_audience:,} 명",
+        help="스크린 확보 규모 등 배급 스케일의 효과를 완전히 배제하고, 오직 감독/배우 스타파워, 장르, 개봉 시즌, 사전 검색 버즈 등의 콘텐츠 경쟁력만으로 예측한 순수 관객 동원력입니다."
     )
 
 with metric_col3:
+    st.metric(
+        label="📈 실제 최종 관객수 (5.20 기준)",
+        value=f"{actual_audience:,} 명" if actual_audience > 0 else "데이터 없음",
+    )
+
+with metric_col4:
     # Error rate between actual-setup prediction and actual audience
     if actual_audience > 0:
         err_pct = ((pred_actual_setup - actual_audience) / actual_audience) * 100
+        
+        if abs(err_pct) > 500:
+            display_value = f"{err_pct:+.1f}%"
+            help_text = f"실제 배급 오차율이 {err_pct:+.1f}%로 매우 높습니다. 개봉 전 인지도를 뛰어넘는 입소문(역주행 등)이나 비정형적 이상 흥행(Outlier)이 작용했을 가능성이 큽니다."
+        else:
+            display_value = f"{err_pct:+.1f}%"
+            help_text = "실제 배급했던 스크린/상영 횟수 조건을 입력했을 때의 모델 예측 관객수와 실제 관객수의 차이 비율입니다."
+            
         st.metric(
             label="🎯 실제 배급 조건 오차율",
-            value=f"{err_pct:+.1f}%",
-            help="실제 배급했던 스크린/상영 횟수 조건을 입력했을 때의 모델 예측 관객수와 실제 관객수의 차이 비율입니다."
+            value=display_value,
+            help=help_text
         )
     else:
         st.metric(label="🎯 실제 배급 조건 오차율", value="데이터 없음")
 
 # Calculate Response Curve
-scrn_range = np.linspace(genre_limit['scrn_min'], genre_limit['scrn_max'], 50)
+scrn_range = np.linspace(scrn_min_adj, scrn_max_adj, 50)
 curve_preds = []
 for s_val in scrn_range:
-    # Maintain proportional show count for realistic sweep
-    prop_show = (sim_show / sim_scrn) * s_val if sim_scrn > 0 else s_val * 4
-    prop_show = np.clip(prop_show, genre_limit['show_min'], genre_limit['show_max'])
-    curve_preds.append(make_prediction(s_val, prop_show))
+    prop_show = s_val * strategy_ratio
+    prop_show = np.clip(prop_show, show_min_adj, show_max_adj)
+    curve_preds.append(make_prediction(s2, pred_potential, s_val, prop_show))
 
 # Plotly Response Curve Chart
 fig_curve = go.Figure()
@@ -293,6 +264,68 @@ fig_curve.update_layout(
 
 st.plotly_chart(fig_curve, width='stretch')
 
+# ── [7-2] 시나리오 테이블 & 최적 효율 배급 추천 ──
+st.write("---")
+opt_col1, opt_col2 = st.columns([5, 3])
+
+with opt_col1:
+    st.write("#### 📊 스크린 규모별 배급 시나리오 테이블")
+    
+    # UI용 5개 대표 구간 시나리오 데이터프레임 산출
+    step_count = 5
+    scrn_steps = np.linspace(scrn_min_adj, scrn_max_adj, step_count).astype(int)
+    scenario_data = []
+    
+    prev_aud = None
+    prev_scrn = None
+    for s_val in scrn_steps:
+        prop_show = s_val * strategy_ratio
+        prop_show = np.clip(prop_show, show_min_adj, show_max_adj)
+        aud_pred = make_prediction(s2, pred_potential, s_val, prop_show)
+        
+        # 1개 스크린당 추가 관객 기여율 (한계 기여도)
+        marginal_yield = 0
+        if prev_aud is not None and prev_scrn is not None and (s_val - prev_scrn) > 0:
+            marginal_yield = (aud_pred - prev_aud) / (s_val - prev_scrn)
+            
+        scenario_data.append({
+            '스크린 수 (개)': int(s_val),
+            '상영 횟수 (회)': int(prop_show),
+            '예상 최종 관객수 (명)': f"{aud_pred:,} 명",
+            '스크린당 관객수 (명)': f"{round(aud_pred / s_val, 1) if s_val > 0 else 0:,} 명",
+            '한계 효율 (추가 관객/스크린)': marginal_yield,
+            '_raw_scrn': s_val,
+            '_raw_aud': aud_pred
+        })
+        prev_aud = aud_pred
+        prev_scrn = s_val
+        
+    df_display = pd.DataFrame(scenario_data)
+    
+    # UI 노출용 포맷팅 (한계 효율 칼럼 문자열 변형 및 raw 칼럼 제거)
+    df_display['한계 효율 (추가 관객/스크린)'] = df_display['한계 효율 (추가 관객/스크린)'].apply(lambda x: f"+{round(x, 1):,} 명" if x > 0 else "-")
+    st.dataframe(
+        df_display.drop(columns=['_raw_scrn', '_raw_aud']),
+        use_container_width=True
+    )
+
+with opt_col2:
+    st.write("#### 💡 최적 배급 효율 추천")
+    
+    # 예측기 모듈의 Elbow Point 고도화 알고리즘 호출
+    rec_min, rec_max, opt_show_min, opt_show_max = find_elbow_point(
+        s2, pred_potential, scrn_min_adj, scrn_max_adj, show_min_adj, show_max_adj, strategy_ratio
+    )
+    
+    st.markdown(f"""
+    * 🎯 **고효율 추천 구간**: 스크린 **`{rec_min:,}개 ~ {rec_max:,}개`**
+    * 🎥 **적정 상영 횟수**: **`{opt_show_min:,}회 ~ {opt_show_max:,}회`**
+    
+    > **[비즈니스 의사결정 코멘트]**  
+    > 해당 추천 영역은 트리 앙상블 반응 모델의 비선형 모객력을 분석하여 **최대 예상 관객수 잠재력의 90% 이상을 수확할 수 있는 최적의 효율 지점(Elbow Point)**을 기준으로 산출되었습니다.
+    > 스크린 수를 `{rec_max:,}개` 이상 과잉 확보하더라도, P&A 비용 및 극장 부킹 영업 리소스 대비 **최종 관객수의 증가 속도가 급격히 정체**되는 구간에 진입하게 되므로, 투자 대비 최대 모객 효율을 일으키는 본 스윗스팟(Sweet Spot) 안에서의 집행을 강력히 권장합니다.
+    """)
+
 # ── [8] AREA C: 실제값 비교 & 피처 중요도 ──
 st.subheader("📊 상세 성능 비교 및 분석")
 
@@ -301,23 +334,36 @@ analysis_col1, analysis_col2 = st.columns(2)
 with analysis_col1:
     st.write("#### 📊 실제값 vs 예측값 비교")
     
-    # Render Bar chart of actual vs prediction
-    compare_df = pd.DataFrame({
-        '구분': ['실제 최종 관객수', '실제 조건 예측', '시뮬레이터 예측'],
-        '관객수': [actual_audience, pred_actual_setup, sim_pred],
-        '컬러': ['#10b981', '#ef4444', '#3b82f6']
-    })
+    # 미개봉 신작(실제 관객수 0명)일 경우와 기개봉작일 경우를 동적으로 분기하여 시각적 조화 붕괴 방지
+    if actual_audience > 0:
+        compare_df = pd.DataFrame({
+            '구분': ['순수 콘텐츠 잠재 흥행력', '실제 조건 예측', '시뮬레이터 예측', '실제 최종 관객수'],
+            '관객수': [potential_audience, pred_actual_setup, sim_pred, actual_audience]
+        })
+        color_map = {
+            '순수 콘텐츠 잠재 흥행력': '#a855f7',
+            '실제 조건 예측': '#f43f5e',
+            '시뮬레이터 예측': '#3b82f6',
+            '실제 최종 관객수': '#10b981'
+        }
+    else:
+        compare_df = pd.DataFrame({
+            '구분': ['순수 콘텐츠 잠재 흥행력', '실제 조건 예측', '시뮬레이터 예측'],
+            '관객수': [potential_audience, pred_actual_setup, sim_pred]
+        })
+        color_map = {
+            '순수 콘텐츠 잠재 흥행력': '#a855f7',
+            '실제 조건 예측': '#f43f5e',
+            '시뮬레이터 예측': '#3b82f6'
+        }
+        st.info("ℹ️ 해당 영화는 아직 미개봉 상태이거나 실제 흥행 실적이 적재되지 않아, 예측 조건 모델값 비교로 자동 분기되었습니다.")
     
     fig_bar = px.bar(
         compare_df,
         x='구분',
         y='관객수',
         color='구분',
-        color_discrete_map={
-            '실제 최종 관객수': '#10b981',
-            '실제 조건 예측': '#f43f5e',
-            '시뮬레이터 예측': '#3b82f6'
-        },
+        color_discrete_map=color_map,
         text_auto=',',
         height=350
     )
@@ -327,6 +373,7 @@ with analysis_col1:
         yaxis_title="최종 관객수 (명)",
         showlegend=False,
         template="plotly_white",
+        font=dict(family="Pretendard, -apple-system, BlinkMacSystemFont, sans-serif"),
         margin=dict(l=40, r=40, t=20, b=40)
     )
     st.plotly_chart(fig_bar, width='stretch')
@@ -350,6 +397,7 @@ with analysis_col2:
         yaxis_title="",
         coloraxis_showscale=False,
         template="plotly_white",
+        font=dict(family="Pretendard, -apple-system, BlinkMacSystemFont, sans-serif"),
         margin=dict(l=40, r=40, t=20, b=40)
     )
     st.plotly_chart(fig_imp, width='stretch')
