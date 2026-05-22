@@ -306,7 +306,7 @@ with opt_col1:
     df_display['한계 효율 (추가 관객/스크린)'] = df_display['한계 효율 (추가 관객/스크린)'].apply(lambda x: f"+{round(x, 1):,} 명" if x > 0 else "-")
     st.dataframe(
         df_display.drop(columns=['_raw_scrn', '_raw_aud']),
-        use_container_width=True
+        width="stretch"
     )
 
 with opt_col2:
