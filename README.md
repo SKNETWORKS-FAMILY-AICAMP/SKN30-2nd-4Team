@@ -12,13 +12,43 @@
 
 ## 👥 팀원
 
-| 이름 | 역할 |
-|:---:|:---:|
-| 홍철민 | 데이터 수집, 모델 비교 및 선정, 데모 구현  |
-| 채동현 | 데이터 수집 및 전처리, EDA_BASELINE-BOOSTING_ML학습 |
-| 박지유 |  |
-| 김범중 |  |
-| 이승민 | 데이터 수집 |
+<table>
+  <tr>
+    <th>이미지</th>
+    <th width="120">이름</th>
+    <th>담당 분석 및 업무</th>
+  </tr>
+
+  <tr>
+    <td><img src="./assets/inside_out1.png" width="60"></td>
+    <td align="center"><b>홍철민</b></td>
+    <td>PM, 데이터 수집, 모델 비교 및 선정, 데모 구현</td>
+  </tr>
+
+  <tr>
+    <td><img src="./assets/inside_out2.png" width="60"></td>
+    <td align="center"><b>채동현</b></td>
+    <td>APM, 데이터 수집 및 전처리, EDA_BASELINE-BOOSTING_ML학습</td>
+  </tr>
+
+  <tr>
+    <td><img src="./assets/inside_out3.png" width="60"></td>
+    <td align="center"><b>박지유</b></td>
+    <td>EDA_BASELINE_ML학습, 회의록 관리</td>
+  </tr>
+
+  <tr>
+    <td><img src="./assets/inside_out4.png" width="60"></td>
+    <td align="center"><b>김범중</b></td>
+    <td>DL학습</td>
+  </tr>
+
+  <tr>
+    <td><img src="./assets/inside_out5.png" width="60"></td>
+    <td align="center"><b>이승민</b></td>
+    <td>데이터 수집</td>
+  </tr>
+</table>
 
 ---
 
