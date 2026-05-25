@@ -46,7 +46,7 @@
   <tr>
     <td><img src="./assets/inside_out5.png" width="60"></td>
     <td align="center"><b>이승민</b></td>
-    <td>데이터 수집</td>
+    <td>날짜 데이터 수집</td>
   </tr>
 </table>
 
